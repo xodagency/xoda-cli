@@ -1,0 +1,29 @@
+{
+  "name": "xoda-cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/generate.js",
+  "bin": {
+    "xoda": "bin/xoda",
+    "xdgenerate": "bin/generate"
+  },
+  "scripts": {
+    "generate": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "xodagen"
+  },
+  "keywords": [
+    "cli",
+    "generator",
+    "atomic"
+  ],
+  "author": "fadhilx",
+  "license": "ISC",
+  "dependencies": {
+    "case": "^1.6.3",
+    "commander": "^5.1.0",
+    "inquirer": "^7.2.0"
+  }
+}
