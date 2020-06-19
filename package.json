@@ -1,6 +1,6 @@
 {
   "name": "xoda-cli",
-  "version": "1.0.0",
+  "version": "1.0.6",
   "description": "",
   "main": "src/generate.js",
   "bin": {
@@ -24,6 +24,7 @@
   "dependencies": {
     "case": "^1.6.3",
     "commander": "^5.1.0",
+    "glob": "^7.1.6",
     "inquirer": "^7.2.0"
   }
 }

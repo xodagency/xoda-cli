@@ -9,8 +9,11 @@ module.exports = (argv) => {
         executableFile: "generate",
       }
     )
-    .command("asset", "colect asset to asset index.js", {
-      executableFile: "asset",
+    .command("gather-asset", "colect asset to asset's index.js", {
+      executableFile: "gather-asset",
+    })
+    .command("gather-component", "colect component to component's index.js", {
+      executableFile: "gather-component",
     })
     .parse(argv);
 };
