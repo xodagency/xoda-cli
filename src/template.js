@@ -7,7 +7,9 @@ import PropTypes from "prop-types";
 import "./${name.pascal}.${styleext}";
 import styled from "styled-components";
 
-const ${name.pascal} = styled.div\`\`;
+const ${name.pascal}Wrapper = styled.div\`\`;
+
+const ${name.pascal} = ({children, ...props})=>(<${name.pascal}Wrapper {...props}>{children}</${name.pascal}Wrapper>);
 
 ${name.pascal}.propTypes = {};
 

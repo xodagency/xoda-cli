@@ -3,7 +3,7 @@ let glob = require("glob");
 let path = require("path");
 let fs = require("fs");
 const getRoot = require("./getRoot");
-
+const outputfile = "index.js";
 module.exports = (argv) => {
   let rawNpmRoot = getRoot("package.json");
   const npmRoot = rawNpmRoot.foundRoot ? rawNpmRoot.url : "./";
@@ -13,6 +13,7 @@ module.exports = (argv) => {
   let ImportObject = {};
   let duplcount = 1;
   files.map((file) => {
+    if (path.basename(file) == path.basename(outputfile)) return;
     file = path.join(file, "");
     file = file.replace(assetpath, "");
     file = file.replace(/\\/g, "/");
@@ -21,9 +22,12 @@ module.exports = (argv) => {
     if (baseName.indexOf(".") >= 0) return;
     baseName = Case.pascal(baseName);
     if (ImportObject[baseName]) {
-      ImportObject[baseName + duplcount] = file;
+      ImportObject[baseName + duplcount] = file.substr(
+        0,
+        file.lastIndexOf(".")
+      );
       duplcount++;
-    } else ImportObject[baseName] = file;
+    } else ImportObject[baseName] = file.substr(0, file.lastIndexOf("."));
   });
   let importStatement = "";
   Object.keys(ImportObject).map((k) => {
@@ -33,10 +37,10 @@ module.exports = (argv) => {
   let exportStatement = `export {\n\t${Object.keys(ImportObject).join(
     ",\n\t"
   )}\n};`;
-  // console.log(path.join(assetpath, "/index.js"));
+  // console.log(path.join(assetpath, "/"+outputfile));
   // console.log(importStatement + "\n" + exportStatement);
   fs.writeFile(
-    path.join(assetpath, "/index.js"),
+    path.join(assetpath, "/" + outputfile),
     importStatement + "\n" + exportStatement,
     (err) => {
       if (err) console.log("err", err);
