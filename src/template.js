@@ -9,7 +9,9 @@ import styled from "styled-components";
 
 const ${name.pascal}Wrapper = styled.div\`\`;
 
-const ${name.pascal} = ({children, ...props})=>(<${name.pascal}Wrapper {...props}>{children}</${name.pascal}Wrapper>);
+const ${name.pascal} = ({children, ...props}${
+    jsext.startsWith('ts') ? ': {children:any}' : ''
+  })=>(<${name.pascal}Wrapper {...props}>{children}</${name.pascal}Wrapper>);
 
 ${name.pascal}.propTypes = {};
 
@@ -30,7 +32,7 @@ import React, { lazy, Suspense } from 'react';
 
 const Lazy${name.pascal} = lazy(() => import('./${name.pascal}'));
 
-const ${name.pascal} = props => (
+const ${name.pascal} = ${jsext.startsWith('ts') ? '(props:any)' : 'props'} => (
   <Suspense fallback={null}>
     <Lazy${name.pascal} {...props} />
   </Suspense>
