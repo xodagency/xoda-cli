@@ -11,7 +11,7 @@ module.exports = (argv) => {
   let assetpath = path.join(npmRoot, rawassetpath);
   let files = glob.sync(path.join(assetpath, "/**/*.?(png|jpg|jpeg|svg)"));
   let ImportObject = {};
-  let duplcount = 1;
+  let duplcount = 0;
   files.map((file) => {
     file = path.join(file, "");
     file = file.replace(assetpath, "");
@@ -19,8 +19,9 @@ module.exports = (argv) => {
     let baseName = path.basename(file.substr(0, file.lastIndexOf(".")));
     baseName = Case.pascal(baseName);
     if (ImportObject[baseName]) {
+      do { duplcount++; }
+      while (ImportObject[baseName + duplcount])
       ImportObject[baseName + duplcount] = file;
-      duplcount++;
     } else ImportObject[baseName] = file;
   });
   let importStatement = "";
