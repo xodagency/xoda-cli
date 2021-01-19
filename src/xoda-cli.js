@@ -1,7 +1,8 @@
 const { program } = require("commander");
+const package = require('../package.json');
 module.exports = (argv) => {
   program
-    .version("0.1.0")
+    .version(package.version)
     .command(
       "generate <c|component|p|page> [type] <name>",
       "generate react atomic component",

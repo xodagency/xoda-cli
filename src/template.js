@@ -1,38 +1,42 @@
 const component = {
-  path: ({ compage, cate, name, jsext, styleext }) =>
-    `src/${compage.lower}/${cate}${name.pascal}/${name.pascal}.${jsext}`,
-  content: ({ compage, cate, name, jsext, styleext }) => `
-import React from "react";
-import PropTypes from "prop-types";
+  path: ({ basedir, compage, cate, name, jsext, styleext, is: { js, ts, jsx, tsx } }) =>
+    `${basedir}/${compage.lower}/${cate}${name.pascal}/${name.pascal}.${jsext}`,
+  content: ({ compage, cate, name, jsext, styleext, is: { js, ts, jsx, tsx } }) => `
+import React${!ts ? '' : `, { FunctionComponent, PropsWithChildren }`} from "react";
+${!js ? '' : `import PropTypes from "prop-types";
+`}import styled from "styled-components";
 import "./${name.pascal}.${styleext}";
-import styled from "styled-components";
+${!ts ? '' : `
+interface ${name.pascal}Props extends PropsWithChildren<any> {
+  
+}
+`}
+const ${name.pascal}Wrapper = styled.div${!ts ? '' : `<${name.pascal}Props>`}\`\`;
 
-const ${name.pascal}Wrapper = styled.div\`\`;
-
-const ${name.pascal} = ({children, ...props}${
-    jsext.startsWith('ts') ? ': {children?:any}' : ''
-  })=>(<${name.pascal}Wrapper {...props}>{children}</${name.pascal}Wrapper>);
-
+const ${name.pascal}${!ts ? '' : `: FunctionComponent<${name.pascal}Props>`} = ({children, ...props})=>(
+  <${name.pascal}Wrapper {...props}>{children}</${name.pascal}Wrapper>
+);
+${!js ? '' : `
 ${name.pascal}.propTypes = {};
 
 ${name.pascal}.defaultProps = {};
-
+`}
 export default ${name.pascal};`,
 };
 const stylesheet = {
-  path: ({ compage, cate, name, jsext, styleext }) =>
-    `src/${compage.lower}/${cate}${name.pascal}/${name.pascal}.${styleext}`,
+  path: ({ basedir, compage, cate, name, jsext, styleext }) =>
+    `${basedir}/${compage.lower}/${cate}${name.pascal}/${name.pascal}.${styleext}`,
   content: ({ compage, cate, name, jsext, styleext }) => `.${name.pascal} {}`,
 };
 const lazy = {
-  path: ({ compage, cate, name, jsext, styleext }) =>
-    `src/${compage.lower}/${cate}${name.pascal}/${name.pascal}.lazy.${jsext}`,
-  content: ({ compage, cate, name, jsext, styleext }) => `
+  path: ({ basedir, compage, cate, name, jsext, styleext }) =>
+    `${basedir}/${compage.lower}/${cate}${name.pascal}/${name.pascal}.lazy.${jsext}`,
+  content: ({ compage, cate, name, jsext, styleext, is: { js, ts, jsx, tsx } }) => `
 import React, { lazy, Suspense } from 'react';
 
 const Lazy${name.pascal} = lazy(() => import('./${name.pascal}'));
 
-const ${name.pascal} = ${jsext.startsWith('ts') ? '(props?:any)' : 'props'} => (
+const ${name.pascal} = ${ts ? '(props?:any)' : 'props'} => (
   <Suspense fallback={null}>
     <Lazy${name.pascal} {...props} />
   </Suspense>
@@ -41,8 +45,8 @@ const ${name.pascal} = ${jsext.startsWith('ts') ? '(props?:any)' : 'props'} => (
 export default ${name.pascal};`,
 };
 const story = {
-  path: ({ compage, cate, name, jsext, styleext }) =>
-    `src/${compage.lower}/${cate}${name.pascal}/${name.pascal}.stories.${jsext}`,
+  path: ({ basedir, compage, cate, name, jsext, styleext }) =>
+    `${basedir}/${compage.lower}/${cate}${name.pascal}/${name.pascal}.stories.${jsext}`,
   content: ({ compage, cate, name, jsext, styleext }) => `
 /* eslint-disable */
 import React from "react";
@@ -54,9 +58,9 @@ storiesOf("${compage.pascal}/${cate}${name.pascal}", module).add("default", () =
 ));`,
 };
 const test = {
-  path: ({ compage, cate, name, jsext, styleext }) =>
-    `src/${compage.lower}/${cate}${name.pascal}/${name.pascal}.test.${jsext}`,
-  content: ({ compage, cate, name, jsext, styleext }) => `
+  path: ({ basedir, compage, cate, name, jsext, styleext, is: { js, ts, jsx, tsx } }) =>
+    `${basedir}/${compage.lower}/${cate}${name.pascal}/${name.pascal}.test.${jsext}`,
+  content: ({ compage, cate, name, jsext, styleext, is: { js, ts, jsx, tsx } }) => `
 import React from 'react';
 import { cleanup, render } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';

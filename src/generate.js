@@ -13,7 +13,6 @@ let rawNpmRoot = getRoot(configFilename);
 const npmRoot = rawNpmRoot.foundRoot ? rawNpmRoot.url : './';
 const configPath = path.join(npmRoot, configFilename);
 const writeConfig = async () => {
-  let generate = (type, atomic_type, name) => {};
   const answers = await inquirer.prompt([
     {
       type: 'list',
@@ -51,7 +50,65 @@ const writeConfig = async () => {
   });
   console.log('finish configure! you can re-run the command');
 };
+let generate = (basedir, config) => (type, atomic_type, name) => {
+  atomtypes = {
+    atom: 'atoms/',
+    molecule: 'molecules/',
+    organism: 'organisms/',
+    template: 'templates/',
+  };
+  compages = {
+    c: 'Components',
+    p: 'Pages',
+  };
+  name = {
+    normal: name,
+    pascal: Case.pascal(name),
+    camel: Case.camel(name),
+    lower: Case.lower(name),
+  };
+  cate = type == 'c' ? atomtypes[atomic_type] || '' : '';
+  compage = {
+    normal: compages[type],
+    pascal: Case.pascal(compages[type]),
+    camel: Case.camel(compages[type]),
+    lower: Case.lower(compages[type]),
+  };
+  Object.keys(template).map((key) => {
+    if (key == 'lazy' && !config.generateLazy) return;
+    if (key == 'story' && !config.generateStorybook) return;
+    if (key == 'test' && !config.generateTest) return;
+    const { jsext, styleext } = config;
+    const { js, ts, jsx, tsx } = {
+      js: jsext.toLowerCase().startsWith("js"),
+      ts: jsext.toLowerCase().startsWith("ts"),
+      jsx: jsext.toLowerCase().startsWith("jsx"),
+      tsx: jsext.toLowerCase().startsWith("tsx")
+    }
+    filename = template[key].path({ basedir, compage, cate, name, jsext, styleext, is: { js, ts, jsx, tsx } });
+    fcontent = template[key].content({
+      compage,
+      cate,
+      name,
+      jsext,
+      styleext,
+      is: { js, ts, jsx, tsx },
+    });
+    if (fs.existsSync(filename)) {
+      console.log(filename, 'is already created');
+      return;
+    }
+    console.log(filename);
+    fs.mkdirSync(path.dirname(filename), { recursive: true }, (err) => {
+      if (err) throw err;
+    });
+    fs.writeFileSync(filename, fcontent, (err) => {
+      if (err) console.log('err', err);
+    });
+  });
+};
 module.exports = async (argv) => {
+
   if (
     !(argv.includes('--help') || argv.includes('-h') || argv.includes('help'))
   ) {
@@ -89,56 +146,7 @@ module.exports = async (argv) => {
     }
     const configBuffer = fs.readFileSync(configPath);
     const config = JSON.parse(configBuffer);
-    generate = (type, atomic_type, name) => {
-      atomtypes = {
-        atom: 'atoms/',
-        molecule: 'molecules/',
-        organism: 'organisms/',
-        template: 'templates/',
-      };
-      compages = {
-        c: 'Components',
-        p: 'Pages',
-      };
-      name = {
-        normal: name,
-        pascal: Case.pascal(name),
-        camel: Case.camel(name),
-        lower: Case.lower(name),
-      };
-      cate = type == 'c' ? atomtypes[atomic_type] || '' : '';
-      compage = {
-        normal: compages[type],
-        pascal: Case.pascal(compages[type]),
-        camel: Case.camel(compages[type]),
-        lower: Case.lower(compages[type]),
-      };
-      Object.keys(template).map((key) => {
-        if (key == 'lazy' && !config.generateLazy) return;
-        if (key == 'story' && !config.generateStorybook) return;
-        if (key == 'test' && !config.generateTest) return;
-        const { jsext, styleext } = config;
-        filename = template[key].path({ compage, cate, name, jsext, styleext });
-        fcontent = template[key].content({
-          compage,
-          cate,
-          name,
-          jsext,
-          styleext,
-        });
-        if (fs.existsSync(filename)) {
-          console.log(filename, 'is already created');
-          return;
-        }
-        console.log(filename);
-        fs.mkdirSync(path.dirname(filename), { recursive: true }, (err) => {
-          if (err) throw err;
-        });
-        fs.writeFileSync(filename, fcontent, (err) => {
-          if (err) console.log('err', err);
-        });
-      });
-    };
+    generate = generate("src", config)
   }
 
   program
@@ -188,3 +196,4 @@ module.exports = async (argv) => {
     });
   program.parse(argv);
 };
+module.exports.generate = generate 
