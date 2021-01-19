@@ -4,10 +4,10 @@ let path = require("path");
 let fs = require("fs");
 const getRoot = require("./getRoot");
 const outputfile = "index.js";
-module.exports = (argv) => {
+const gatherComponent = (basedir = "src") => (argv) => {
   let rawNpmRoot = getRoot("package.json");
   const npmRoot = rawNpmRoot.foundRoot ? rawNpmRoot.url : "./";
-  let rawassetpath = "src/components/";
+  let rawassetpath = basedir + "/components/";
   let assetpath = path.join(npmRoot, rawassetpath);
   let files = glob.sync(path.join(assetpath, "/**/*.?(js|jsx|ts|tsx)"));
   let ImportObject = {};
@@ -47,3 +47,5 @@ module.exports = (argv) => {
     }
   );
 };
+module.exports = gatherComponent()
+module.exports.gatherComponent = gatherComponent

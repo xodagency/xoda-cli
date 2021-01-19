@@ -7,6 +7,7 @@ const package = require('../package.json');
 const template = require('./template');
 const getRoot = require('./getRoot');
 let fs = require('fs');
+const gatherComponent = require('./gather-component');
 const configFilename = 'xoda-cli-config.json';
 
 let rawNpmRoot = getRoot(configFilename);
@@ -74,6 +75,7 @@ let generate = (basedir, config) => (type, atomic_type, name) => {
     camel: Case.camel(compages[type]),
     lower: Case.lower(compages[type]),
   };
+  let erro = "";
   Object.keys(template).map((key) => {
     if (key == 'lazy' && !config.generateLazy) return;
     if (key == 'story' && !config.generateStorybook) return;
@@ -96,16 +98,27 @@ let generate = (basedir, config) => (type, atomic_type, name) => {
     });
     if (fs.existsSync(filename)) {
       console.log(filename, 'is already created');
+      erro = "some file already exists"
       return;
     }
     console.log(filename);
     fs.mkdirSync(path.dirname(filename), { recursive: true }, (err) => {
-      if (err) throw err;
+
+      if (err) {
+        erro = "having trouble to make directory"
+        throw err;
+      }
     });
     fs.writeFileSync(filename, fcontent, (err) => {
-      if (err) console.log('err', err);
+      if (err) {
+        console.log('err', err);
+        erro = "some file have error"
+      }
     });
   });
+  if (erro) return console.log(erro)
+  console.log("Gathering component...")
+  gatherComponent.gatherComponent(basedir)()
 };
 module.exports = async (argv) => {
 
@@ -147,6 +160,7 @@ module.exports = async (argv) => {
     const configBuffer = fs.readFileSync(configPath);
     const config = JSON.parse(configBuffer);
     generate = generate("src", config)
+
   }
 
   program
