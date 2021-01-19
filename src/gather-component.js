@@ -9,7 +9,7 @@ module.exports = (argv) => {
   const npmRoot = rawNpmRoot.foundRoot ? rawNpmRoot.url : "./";
   let rawassetpath = "src/components/";
   let assetpath = path.join(npmRoot, rawassetpath);
-  let files = glob.sync(path.join(assetpath, "/**/*.?(js|jsx)"));
+  let files = glob.sync(path.join(assetpath, "/**/*.?(js|jsx|ts|tsx)"));
   let ImportObject = {};
   let duplcount = 1;
   files.map((file) => {
