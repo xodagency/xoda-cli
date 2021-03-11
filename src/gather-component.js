@@ -9,7 +9,15 @@ const gatherComponent = (basedir = "src") => (argv) => {
   const npmRoot = rawNpmRoot.foundRoot ? rawNpmRoot.url : "./";
   let rawassetpath = basedir + "/components/";
   let assetpath = path.join(npmRoot, rawassetpath);
-  let files = glob.sync(path.join(assetpath, "/**/*.?(js|jsx|ts|tsx)"));
+
+  const configPath = path.join(npmRoot, 'xoda-cli-config.json');
+  let configBuffer = fs.readFileSync(configPath)
+  const config = JSON.parse(configBuffer);
+  let ignore = (config.ignore || []).map(i => path.join(npmRoot, i))
+
+  const crawlpath = path.join(assetpath, "/**/*.?(js|jsx|ts|tsx)")
+  let files = glob.sync(crawlpath, { ignore });
+  console.log({ crawlpath }, ignore)
   let ImportObject = {};
   let duplcount = 1;
   files.map((file) => {
