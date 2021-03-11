@@ -25,7 +25,7 @@ const writeConfig = async () => {
       type: 'list',
       message: 'css or scss?',
       name: 'styleext',
-      choices: ['scss', 'css'],
+      choices: ['scss', 'css', { name: "Do not generate stylesheet", value: false }],
     },
     {
       type: 'confirm',
@@ -80,6 +80,7 @@ let generate = (basedir, config) => (type, atomic_type, name) => {
     if (key == 'lazy' && !config.generateLazy) return;
     if (key == 'story' && !config.generateStorybook) return;
     if (key == 'test' && !config.generateTest) return;
+    if (key == 'stylesheet' && !config.styleext) return;
     const { jsext, styleext } = config;
     const { js, ts, jsx, tsx } = {
       js: jsext.toLowerCase().startsWith("js"),
@@ -210,4 +211,4 @@ module.exports = async (argv) => {
     });
   program.parse(argv);
 };
-module.exports.generate = generate 
+module.exports.generate = generate

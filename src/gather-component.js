@@ -17,7 +17,6 @@ const gatherComponent = (basedir = "src") => (argv) => {
 
   const crawlpath = path.join(assetpath, "/**/*.?(js|jsx|ts|tsx)")
   let files = glob.sync(crawlpath, { ignore });
-  console.log({ crawlpath }, ignore)
   let ImportObject = {};
   let duplcount = 1;
   files.map((file) => {
