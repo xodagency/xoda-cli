@@ -5,7 +5,7 @@ const component = {
 import React${!ts ? '' : `, { FunctionComponent, PropsWithChildren }`} from "react";
 ${!js ? '' : `import PropTypes from "prop-types";
 `}import styled from "styled-components";
-import "./${name.pascal}.${styleext}";
+${styleext ? `import "./${name.pascal}.${styleext}";` : ""}
 ${!ts ? '' : `
 interface ${name.pascal}Props extends PropsWithChildren<any> {
   
@@ -71,9 +71,8 @@ describe('<${name.pascal} />', () => {
 
   test('it should mount', () => {
     const { getByTestId } = render(<${name.pascal} />);
-    const ${name.camel} = getByTestId('${name.pascal}');
 
-    expect(${name.camel}).toBeInTheDocument();
+    expect(container.firstChild).not.toBeNull();
   });
 });
 `,
